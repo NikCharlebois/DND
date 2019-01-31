@@ -1,0 +1,13 @@
+{
+  "entries": [
+    {
+      "entry": "./lib/webparts/newsFeed/NewsFeedWebPart.js",
+      "manifest": "./src/webparts/newsFeed/NewsFeedWebPart.manifest.json",
+      "outputPath": "./dist/news-feed-web-part.js"
+    }
+  ],
+  "externals": {},
+  "localizedResources": {
+    "NewsFeedWebPartStrings": "webparts/newsFeed/loc/{locale}.js"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "NewsFeed WebPart",
+    "id": "8c6b4c4e-4602-4082-9b04-ecf29aa43008",
+    "version": "1.0.0.5"
+  },
+  "paths": {
+    "zippedPackage": "solution/news-feed-web-part.sppkg"
+  }
+}
