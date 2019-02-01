@@ -20,10 +20,13 @@ import
 }
 from '@microsoft/sp-lodash-subset';
 
+// Defines an object that is an array of NewsFeed items;
 export interface ISPNewsItems
 {
   value: ISPNewsItem[];
 }
+
+// Defines what fields are expected to be part of a NewsFeed item'
 export interface ISPNewsItem
 {
   ID: string,
@@ -42,10 +45,11 @@ import
 }
 from '@microsoft/sp-http';
 
-
+// Import the CSS and locales;
 import styles from './NewsFeedWebPart.module.scss';
 import * as strings from 'NewsFeedWebPartStrings';
 
+// This determines what properties needs to be exposed in the web part's properties pane;
 export interface INewsFeedWebPartProps
 {
   newsfeedListName: string;
@@ -75,6 +79,7 @@ export default class NewsFeedWebPart extends BaseClientSideWebPart<INewsFeedWebP
     }) as Promise<ISPNewsItems>;
   }
 
+  // This Fakes the REST API that will be returning the content of a single list item based on its ID.
   private _getMockSpecificItem(ID: string): Promise<ISPNewsItem>
   {
     return MockHttpClient.get(this.context.pageContext.web.absoluteUrl).then(() => 
@@ -91,6 +96,7 @@ export default class NewsFeedWebPart extends BaseClientSideWebPart<INewsFeedWebP
     }) as Promise<ISPNewsItem>;
   }
 
+  // Makes a call to the SharePoint REST APIs to retrieve all items of a list based on its provided Title;
   private _getListData(): Promise<ISPNewsItems>
   {
     return this.context.spHttpClient.get(this.context.pageContext.web.absoluteUrl + `/_api/web/lists/GetByTitle('${ escape(this.properties.newsfeedListName)}')/Items`, SPHttpClient.configurations.v1)
@@ -101,6 +107,7 @@ export default class NewsFeedWebPart extends BaseClientSideWebPart<INewsFeedWebP
         });
   }
 
+  // Makes call to the SharePoint REST APIs to retrieve a single list item based on ID from the specified list;
   private _getSpecificItem(ID: string): Promise<ISPNewsItem>
   {
     return this.context.spHttpClient.get(this.context.pageContext.web.absoluteUrl + `/_api/web/lists/GetByTitle('${ escape(this.properties.newsfeedListName)}')/Items/GetByID('${ ID }')`, SPHttpClient.configurations.v1)
@@ -111,6 +118,7 @@ export default class NewsFeedWebPart extends BaseClientSideWebPart<INewsFeedWebP
         });
   }
 
+  // If we are running the local workbench (gulp serve), then use the Mock functions and data, otherwise use the official ones;
   private _getSpecificItemAsync(ID: string): void
   {
     if (Environment.type === EnvironmentType.Local)
@@ -130,6 +138,7 @@ export default class NewsFeedWebPart extends BaseClientSideWebPart<INewsFeedWebP
     }
   }
 
+  // If we are running the local workbench (gulp serve), then use the Mock functions and data, otherwise use the official ones;
   private _renderListAsync(): void
   {
     if (Environment.type === EnvironmentType.Local)
@@ -149,6 +158,7 @@ export default class NewsFeedWebPart extends BaseClientSideWebPart<INewsFeedWebP
     }
   }
 
+  // Renders a single item's content as a rounded Div located right under the item's title select by the user;
   private _renderItemDisplay(item: ISPNewsItem)
   {
     var existingPopup = document.getElementById("divPopup" + item.ID);
@@ -160,6 +170,7 @@ export default class NewsFeedWebPart extends BaseClientSideWebPart<INewsFeedWebP
       popup.innerHTML = item[this.properties.contentEnglishColumn];
       var popupContent = document.getElementById("popupContent" + item.ID);
       
+      // Define an X link to close the news item upon being clicked;
       var closePopupLink = document.createElement("a");
       closePopupLink.addEventListener("click", (e:Event) =>  this._hidePopup(item.ID));
       closePopupLink.className = styles.PopupCloseLink;
@@ -170,6 +181,7 @@ export default class NewsFeedWebPart extends BaseClientSideWebPart<INewsFeedWebP
     }
   }
 
+  // Hides the news item for which the associated X link was clicked;
   private _hidePopup(ID):void
   {
     var remove = document.getElementById("divPopup" + ID);
@@ -177,6 +189,7 @@ export default class NewsFeedWebPart extends BaseClientSideWebPart<INewsFeedWebP
     if (remove) remove.parentNode.removeChild(remove);
   }
 
+  // Retrieve all NewsFeed items from the specified list and render them as links based on their titles;
   private _renderList(items: ISPNewsItem[]): void
   {
     const listContainer: Element = this.domElement.querySelector('#spListContainer');
@@ -199,6 +212,7 @@ export default class NewsFeedWebPart extends BaseClientSideWebPart<INewsFeedWebP
     }); 
   }
 
+  // Main method being executed when the web part loads. MAkes asynchrounous calls to retrieve the data;
   public render(): void
   {
     var currentUrl = window.location.href;
@@ -215,11 +229,7 @@ export default class NewsFeedWebPart extends BaseClientSideWebPart<INewsFeedWebP
       this._renderListAsync();
   }
 
-  protected get dataVersion(): Version
-  {
-    return Version.parse('1.0');
-  }
-
+  // Displays the SPFx webpart's menu;
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration
   {
     return {
